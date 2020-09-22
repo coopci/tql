@@ -25,6 +25,31 @@ public class TextMatchingVisitor extends TQLBaseVisitor<Boolean> {
         this.text = text;
     }
 
+//    @Override public Boolean visitGrep(@NotNull TQLParser.GrepContext ctx) {
+//        return visitChildren(ctx);
+//    }
+//    @Override public Boolean visitStrequal(@NotNull TQLParser.StrequalContext ctx) {
+//        return visitChildren(ctx);
+//    }
+
+
+    @Override public Boolean visitKvgrep (@NotNull TQLParser.KvgrepContext ctx) {
+
+        TQLParser.FieldnameContext fnctx = ctx.fieldname();
+        String fieldname = fnctx.getChild(0).getText();
+        String fieldvalue = (String)this.getParsed().get(fieldname);
+        String operand = ctx.getChild(2).getText();
+        operand = operand.substring(1, operand.length()-1);
+        return fieldvalue.contains(operand);
+    }
+
+
+    @Override public Boolean visitKvatom(@NotNull TQLParser.KvatomContext ctx) {
+        return visit(ctx.getChild(0));
+    }
+    @Override public Boolean visitAtom(@NotNull TQLParser.AtomContext ctx) {
+        return visit(ctx.getChild(0)); }
+
 
     @Override
     public Boolean visitQuery(@NotNull TQLParser.QueryContext ctx) {
@@ -104,7 +129,7 @@ public class TextMatchingVisitor extends TQLBaseVisitor<Boolean> {
     }
 
     @Override
-    public Boolean visitAtom(@NotNull TQLParser.AtomContext ctx) {
+    public Boolean visitKw(@NotNull TQLParser.KwContext ctx) {
         // return visitChildren(ctx);
 
         String keyword = null;
