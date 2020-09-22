@@ -3,23 +3,45 @@ grammar TQL;
 /** Match things like "call foo;" */
 and: AND;
 or: OR;
-// junction: AND | OR;
-atom: LITERAL | STRING;
+
+fieldname: LITERAL;
+
+
+kvgrep: fieldname  ':' STRING; //  grep against a field.
+kvnumequal: fieldname  '='  NUM; //  Cast the field to a number then test equality between the field value and the given constant.
+kvstrequal: fieldname  ':='  STRING; // Test equality between the field value and the given string.
+
+kvatom: kvgrep | kvnumequal | kvstrequal;
+kw: LITERAL | STRING; // grep over the whole text.
+atom: kw | kvatom;
+
+
+
 
 conjuction: atom
-    | conjuction and atom; // and vs AND generated code is easier to use.
+    | conjuction and atom; // and vs AND: and generated code is easier to use.
 
-disjuction: (atom | conjuction)
-    | disjuction or (atom|conjuction);
+
+
+disjuction: conjuction
+    | disjuction or conjuction;
 
 query: disjuction;
 
 
+
+
+
+
+
 //////////////////////////////////////////////////////////////////////
+
+
+
 parsejson: 'parsejson';
-parsekv: 'parescsv';
-parseregex:  'parseregex';
-cut: 'cut';
+ parseregex:  'parseregex';  // find field(s) with regular expression.
+cut: 'cut';       // cut raw text by given delimiter and name the resulting fields
+parsekv: 'pareskv'; // similar to cut, but pick the fields' name from raw text.
 
 parse: parsejson | parsekv | parseregex | cut;
 pipe: '|';
@@ -35,4 +57,12 @@ WS: (' ' |'\n' |'\r' )+ -> channel(HIDDEN) ; // ignore whitespace
 STRING: '"' (ESC|.)*? '"' ;
 fragment
 ESC : '\\"' | '\\\\' ; // 2-char sequences \" and \\
-PRIINTABLE: ~[' ''\n''\r'];   //anything but whitespace
+PRIINTABLE: ~[' ''\n''\r''"'];   //anything but whitespace and '"'
+
+NUM  :   INT;
+
+INT :   DIGIT+;
+
+
+fragment
+DIGIT   :   ('0'..'9');
