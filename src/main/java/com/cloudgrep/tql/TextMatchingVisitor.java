@@ -5,6 +5,7 @@ import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNodeImpl;
 
+import java.math.BigDecimal;
 import java.util.Map;
 
 public class TextMatchingVisitor extends TQLBaseVisitor<Boolean> {
@@ -38,6 +39,17 @@ public class TextMatchingVisitor extends TQLBaseVisitor<Boolean> {
         return fieldvalue.toString();
     }
 
+
+    private Number getNUmberField(String fieldname) {
+        Object fieldvalue = this.getParsed().get(fieldname);
+        if(fieldvalue instanceof Number) {
+            return (Number)fieldvalue;
+        } else {
+            // likely String
+            return new BigDecimal(fieldvalue.toString());
+        }
+    }
+
     @Override
     public Boolean visitKvgrep (@NotNull TQLParser.KvgrepContext ctx) {
 
@@ -48,7 +60,8 @@ public class TextMatchingVisitor extends TQLBaseVisitor<Boolean> {
         operand = operand.substring(1, operand.length()-1);
         return fieldvalue.contains(operand);
     }
-    @Override public Boolean visitKvstrequal(@NotNull TQLParser.KvstrequalContext ctx) {
+    @Override
+    public Boolean visitKvstrequal(@NotNull TQLParser.KvstrequalContext ctx) {
 
         TQLParser.FieldnameContext fnctx = ctx.fieldname();
         String fieldname = fnctx.getChild(0).getText();
@@ -56,6 +69,17 @@ public class TextMatchingVisitor extends TQLBaseVisitor<Boolean> {
         String operand = ctx.getChild(2).getText();
         operand = operand.substring(1, operand.length()-1);
         return operand.equals(fieldvalue);
+    }
+
+    @Override
+    public Boolean visitKvnumequal(@NotNull TQLParser.KvnumequalContext ctx) {
+
+        TQLParser.FieldnameContext fnctx = ctx.fieldname();
+        String fieldname = fnctx.getChild(0).getText();
+        Number fieldvalue = this.getNUmberField(fieldname);
+        String operand = ctx.getChild(2).getText();
+        return new BigDecimal(operand).compareTo(new BigDecimal(fieldvalue.toString())) == 0;
+
     }
 
 
