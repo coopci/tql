@@ -6,6 +6,7 @@ import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.Date;
 
 import static org.junit.Assert.*;
 
@@ -112,10 +113,10 @@ public class TextMatchingVisitorTest {
     }
 
     @Test
-    public void testKvStringequalMatch() throws IOException {
+    public void testKvStringGrepMatch() throws IOException {
 
 
-        ByteArrayInputStream input = new ByteArrayInputStream("akhd  | parsejson | sdf : \"akhd\"".getBytes());
+        ByteArrayInputStream input = new ByteArrayInputStream("akhd  | parsejson | sdf : \"akh\"".getBytes());
         TQLLexer lexer = new TQLLexer(new ANTLRInputStream(input));
         CommonTokenStream tokens = new CommonTokenStream(lexer);
 
@@ -133,7 +134,7 @@ public class TextMatchingVisitorTest {
     }
 
     @Test
-    public void testKvStringequalNotMatch() throws IOException {
+    public void testKvStringGrepNotMatch() throws IOException {
 
 
         ByteArrayInputStream input = new ByteArrayInputStream("akhd  | parsejson | sdf : \"akhd1\"".getBytes());
@@ -147,6 +148,52 @@ public class TextMatchingVisitorTest {
         TextMatchingVisitor eval = new TextMatchingVisitor("{'sdf': 'akhd'}");
         Boolean matched = eval.visit(rctx);
         // not match because the text dosen't contain hdohg
+        assertFalse(matched);
+
+        // parsejson didn't executed because match failed before parsejon
+        assertEquals(1, eval.getParsed().size());
+    }
+
+
+
+    @Test
+    public void testKvStringequalMatch() throws IOException {
+
+
+        ByteArrayInputStream input = new ByteArrayInputStream("akhd  | parsejson | sdf := \"akhd\"".getBytes());
+        TQLLexer lexer = new TQLLexer(new ANTLRInputStream(input));
+        CommonTokenStream tokens = new CommonTokenStream(lexer);
+
+        TQLParser parser = new TQLParser(tokens);
+        TQLParser.PipelineContext rctx = parser.pipeline();
+
+
+        TextMatchingVisitor eval = new TextMatchingVisitor("{'sdf': 'akhd'}");
+        Boolean matched = eval.visit(rctx);
+        // not match because the text dosen't contain hdohg
+        assertTrue(matched);
+
+        // parsejson didn't executed because match failed before parsejon
+        assertEquals(1, eval.getParsed().size());
+    }
+
+
+
+    @Test
+    public void testKvStringequalNotMatch() throws IOException {
+
+
+        ByteArrayInputStream input = new ByteArrayInputStream("akhd  | parsejson | sdf := \"akh\"".getBytes());
+        TQLLexer lexer = new TQLLexer(new ANTLRInputStream(input));
+        CommonTokenStream tokens = new CommonTokenStream(lexer);
+
+        TQLParser parser = new TQLParser(tokens);
+        TQLParser.PipelineContext rctx = parser.pipeline();
+
+
+        TextMatchingVisitor eval = new TextMatchingVisitor("{'sdf': 'akhd'}");
+        Boolean matched = eval.visit(rctx);
+        // akh != akhd
         assertFalse(matched);
 
         // parsejson didn't executed because match failed before parsejon

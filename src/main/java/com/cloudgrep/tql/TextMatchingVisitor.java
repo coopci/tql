@@ -33,14 +33,29 @@ public class TextMatchingVisitor extends TQLBaseVisitor<Boolean> {
 //    }
 
 
-    @Override public Boolean visitKvgrep (@NotNull TQLParser.KvgrepContext ctx) {
+    private String getStringField(String fieldname) {
+        Object fieldvalue = (String)this.getParsed().get(fieldname);
+        return fieldvalue.toString();
+    }
+
+    @Override
+    public Boolean visitKvgrep (@NotNull TQLParser.KvgrepContext ctx) {
 
         TQLParser.FieldnameContext fnctx = ctx.fieldname();
         String fieldname = fnctx.getChild(0).getText();
-        String fieldvalue = (String)this.getParsed().get(fieldname);
+        String fieldvalue = this.getStringField(fieldname);
         String operand = ctx.getChild(2).getText();
         operand = operand.substring(1, operand.length()-1);
         return fieldvalue.contains(operand);
+    }
+    @Override public Boolean visitKvstrequal(@NotNull TQLParser.KvstrequalContext ctx) {
+
+        TQLParser.FieldnameContext fnctx = ctx.fieldname();
+        String fieldname = fnctx.getChild(0).getText();
+        String fieldvalue = this.getStringField(fieldname);
+        String operand = ctx.getChild(2).getText();
+        operand = operand.substring(1, operand.length()-1);
+        return operand.equals(fieldvalue);
     }
 
 
