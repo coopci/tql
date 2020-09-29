@@ -56,63 +56,6 @@ public class TextMatchingVisitorTest {
     }
 
 
-    @Test
-    public void testParseKvStringequalAtom() throws IOException {
-
-
-        String query = " sdf : \"akhd\"";
-        ByteArrayInputStream input = new ByteArrayInputStream(query.getBytes());
-        TQLLexer lexer = new TQLLexer(new ANTLRInputStream(input));
-        CommonTokenStream tokens = new CommonTokenStream(lexer);
-
-        TQLParser parser = new TQLParser(tokens);
-        TQLParser.AtomContext ctx = parser.atom();
-        //assertEquals(TQLParser.GrepContext.class, ctx.children.get(1).getClass());
-        return;
-    }
-
-    @Test
-    public void testParseKvStringequalConj() throws IOException {
-        String query = " sdf : \"akhd7t78t48g\"";
-        ByteArrayInputStream input = new ByteArrayInputStream(query.getBytes());
-        TQLLexer lexer = new TQLLexer(new ANTLRInputStream(input));
-        CommonTokenStream tokens = new CommonTokenStream(lexer);
-
-        TQLParser parser = new TQLParser(tokens);
-        TQLParser.ConjuctionContext ctx = parser.conjuction();
-        //assertEquals(TQLParser.GrepContext.class, ctx.children.get(1).getClass());
-        return;
-    }
-
-
-    @Test
-    public void testParseKvStringequalDisj() throws IOException {
-        String query = " sdf : \"akhd\"";
-        ByteArrayInputStream input = new ByteArrayInputStream(query.getBytes());
-        TQLLexer lexer = new TQLLexer(new ANTLRInputStream(input));
-        CommonTokenStream tokens = new CommonTokenStream(lexer);
-
-        TQLParser parser = new TQLParser(tokens);
-        TQLParser.DisjuctionContext ctx = parser.disjuction();
-        //assertEquals(TQLParser.GrepContext.class, ctx.children.get(1).getClass());
-        return;
-    }
-
-
-    @Test
-    public void testParseKvStringequalQuery() throws IOException {
-
-
-        String query = " sdf : \"akhd\"";
-        ByteArrayInputStream input = new ByteArrayInputStream(query.getBytes());
-        TQLLexer lexer = new TQLLexer(new ANTLRInputStream(input));
-        CommonTokenStream tokens = new CommonTokenStream(lexer);
-
-        TQLParser parser = new TQLParser(tokens);
-        TQLParser.QueryContext ctx = parser.query();
-        //assertEquals(TQLParser.GrepContext.class, ctx.children.get(1).getClass());
-        return;
-    }
 
     @Test
     public void testKvStringGrepMatch() throws IOException {
@@ -249,25 +192,9 @@ public class TextMatchingVisitorTest {
 
 
 
-    @Test
-    public void testParseNum() throws IOException {
-
-
-        ByteArrayInputStream input = new ByteArrayInputStream("1136".getBytes());
-        TQLLexer lexer = new TQLLexer(new ANTLRInputStream(input));
-        CommonTokenStream tokens = new CommonTokenStream(lexer);
-
-        TQLParser parser = new TQLParser(tokens);
-        TQLParser.NumContext ctx = parser.num();
-        TerminalNode terminal = (TerminalNode)ctx.getChild(0);
-        assertEquals(TQLParser.NUM, terminal.getSymbol().getType());
-        assertEquals("1136", terminal.getSymbol().getText());
-        return;
-    }
-
 
     @Test
-    public void test1()  {
+    public void testAdhoc()  {
 
         assertEquals(0, new BigDecimal("100.0").compareTo(new BigDecimal(100)));
     }
