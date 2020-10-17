@@ -198,4 +198,25 @@ public class TextMatchingVisitorTest {
 
         assertEquals(0, new BigDecimal("100.0").compareTo(new BigDecimal(100)));
     }
+
+
+
+    @Test
+    public void testKeyword() throws IOException {
+
+
+        ByteArrayInputStream input = new ByteArrayInputStream(" \"and\"".getBytes());
+        TQLLexer lexer = new TQLLexer(new ANTLRInputStream(input));
+        CommonTokenStream tokens = new CommonTokenStream(lexer);
+
+        TQLParser parser = new TQLParser(tokens);
+        TQLParser.PipelineContext rctx = parser.pipeline();
+
+
+        TextMatchingVisitor eval = new TextMatchingVisitor("{'sdf': 'and'}");
+        Boolean matched = eval.visit(rctx);
+        // not match because the text dosen't contain hdohg
+        assertTrue(matched);
+
+    }
 }
